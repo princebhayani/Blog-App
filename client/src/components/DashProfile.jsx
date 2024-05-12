@@ -24,7 +24,7 @@ function DashProfile() {
           type="email"
           id="email"
           placeholder="email"
-          defaultValue={currentUser.username}
+          defaultValue={currentUser.email}
         />
         <TextInput
           type="password"
