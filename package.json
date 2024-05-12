@@ -17,6 +17,7 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.2.4",
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "react-circular-progressbar": "^2.1.0"
   }
 }
