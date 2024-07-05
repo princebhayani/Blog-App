@@ -1,4 +1,4 @@
-
+import CallToAction from "../components/CallToAction"
 
 function Projects() {
     return (
