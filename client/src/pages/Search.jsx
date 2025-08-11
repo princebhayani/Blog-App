@@ -10,7 +10,6 @@ export default function Search() {
         category: 'uncategorized',
     });
 
-    console.log(sidebarData);
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showMore, setShowMore] = useState(false);
@@ -35,21 +34,20 @@ export default function Search() {
 
         const fetchPosts = async () => {
             setLoading(true);
-            const searchQuery = urlParams.toString();
-            const res = await fetch(`/api/post/getposts?${searchQuery}`);
-            if (!res.ok) {
-                setLoading(false);
-                return;
-            }
-            if (res.ok) {
+            try {
+                const searchQuery = urlParams.toString();
+                const res = await fetch(`/api/post/getposts?${searchQuery}`);
+                if (!res.ok) {
+                    setLoading(false);
+                    throw new Error('Failed to fetch posts');
+                }
                 const data = await res.json();
                 setPosts(data.posts);
                 setLoading(false);
-                if (data.posts.length === 9) {
-                    setShowMore(true);
-                } else {
-                    setShowMore(false);
-                }
+                setShowMore(data.posts.length === 9);
+            } catch (error) {
+                setLoading(false);
+                setPosts([]);
             }
         };
         fetchPosts();
@@ -85,18 +83,14 @@ export default function Search() {
         const urlParams = new URLSearchParams(location.search);
         urlParams.set('startIndex', startIndex);
         const searchQuery = urlParams.toString();
-        const res = await fetch(`/api/post/getposts?${searchQuery}`);
-        if (!res.ok) {
-            return;
-        }
-        if (res.ok) {
+        try {
+            const res = await fetch(`/api/post/getposts?${searchQuery}`);
+            if (!res.ok) throw new Error('Failed to fetch more posts');
             const data = await res.json();
             setPosts([...posts, ...data.posts]);
-            if (data.posts.length === 9) {
-                setShowMore(true);
-            } else {
-                setShowMore(false);
-            }
+            setShowMore(data.posts.length === 9);
+        } catch (error) {
+            setShowMore(false);
         }
     };
 

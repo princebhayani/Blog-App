@@ -14,20 +14,14 @@ export default function PostPage() {
 
     useEffect(() => {
         const fetchPost = async () => {
+            setLoading(true);
             try {
-                setLoading(true);
                 const res = await fetch(`/api/post/getposts?slug=${postSlug}`);
+                if (!res.ok) throw new Error('Failed to fetch post');
                 const data = await res.json();
-                if (!res.ok) {
-                    setError(true);
-                    setLoading(false);
-                    return;
-                }
-                if (res.ok) {
-                    setPost(data.posts[0]);
-                    setLoading(false);
-                    setError(false);
-                }
+                setPost(data.posts[0]);
+                setLoading(false);
+                setError(false);
             } catch (error) {
                 setError(true);
                 setLoading(false);
@@ -37,18 +31,17 @@ export default function PostPage() {
     }, [postSlug]);
 
     useEffect(() => {
-        try {
-            const fetchRecentPosts = async () => {
+        const fetchRecentPosts = async () => {
+            try {
                 const res = await fetch(`/api/post/getposts?limit=3`);
+                if (!res.ok) throw new Error('Failed to fetch recent posts');
                 const data = await res.json();
-                if (res.ok) {
-                    setRecentPosts(data.posts);
-                }
-            };
-            fetchRecentPosts();
-        } catch (error) {
-            console.log(error.message);
-        }
+                setRecentPosts(data.posts);
+            } catch (error) {
+                setRecentPosts([]);
+            }
+        };
+        fetchRecentPosts();
     }, []);
 
     if (loading)

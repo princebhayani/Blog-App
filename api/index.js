@@ -3,6 +3,9 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 
+// Debug log to verify dotenv loaded
+// console.log('Loaded MONGO_URI:', process.env.MONGO_URI);
+
 import userRoutes from "./routes/user.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import postRoutes from './routes/post.routes.js';
@@ -10,15 +13,28 @@ import commentRoutes from './routes/comment.routes.js';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 
+const mongoUri = process.env.MONGO_URI;
+if (!mongoUri || typeof mongoUri !== 'string') {
+  console.error('MongoDB connection error: MONGO_URI is not defined or not a string. Check your .env file.');
+  process.exit(1);
+}
+
 mongoose
   .connect(
-    process.env.MONGO_URI
+    mongoUri,
+    {
+      serverSelectionTimeoutMS: 30000, // Increase timeout to 30s
+      socketTimeoutMS: 30000,
+      // useNewUrlParser: true, // deprecated, remove
+      // useUnifiedTopology: true, // deprecated, remove
+    }
   )
   .then(() => {
     console.log("MongoDB is Connected");
   })
   .catch((error) => {
-    console.log(error.message);
+    console.error("MongoDB connection error:", error.message);
+    process.exit(1); // Exit process if unable to connect
   });
   
 const __dirname = path.resolve();

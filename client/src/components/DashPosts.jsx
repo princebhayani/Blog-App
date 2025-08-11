@@ -15,15 +15,13 @@ function DashPosts() {
     const fetchPosts = async () => {
       try {
         const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
+        if (!res.ok) throw new Error('Failed to fetch posts');
         const data = await res.json();
-        if (res.ok) {
-          setUserPosts(data.posts);
-          if (data.posts.length < 9) {
-            setShowMore(false);
-          }
-        }
+        setUserPosts(data.posts);
+        setShowMore(data.posts.length >= 9);
       } catch (error) {
-        console.log(error.message);
+        setUserPosts([]);
+        setShowMore(false);
       }
     };
     if (currentUser.isAdmin) {
@@ -37,15 +35,12 @@ function DashPosts() {
       const res = await fetch(
         `/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`
       );
+      if (!res.ok) throw new Error('Failed to fetch more posts');
       const data = await res.json();
-      if (res.ok) {
-        setUserPosts((prev) => [...prev, ...data.posts]);
-        if (data.posts.length < 9) {
-          setShowMore(false);
-        }
-      }
+      setUserPosts((prev) => [...prev, ...data.posts]);
+      setShowMore(data.posts.length >= 9);
     } catch (error) {
-      console.log(error.message);
+      setShowMore(false);
     }
   };
 
@@ -58,16 +53,12 @@ function DashPosts() {
           method: 'DELETE',
         }
       );
-      const data = await res.json();
-      if (!res.ok) {
-        console.log(data.message);
-      } else {
-        setUserPosts((prev) =>
-          prev.filter((post) => post._id !== postIdToDelete)
-        );
-      }
+      if (!res.ok) throw new Error('Failed to delete post');
+      setUserPosts((prev) =>
+        prev.filter((post) => post._id !== postIdToDelete)
+      );
     } catch (error) {
-      console.log(error.message);
+      // Optionally show error to user
     }
   };
 

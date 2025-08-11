@@ -24,40 +24,37 @@ export default function DashboardComp() {
         const fetchUsers = async () => {
             try {
                 const res = await fetch('/api/user/getusers?limit=5');
+                if (!res.ok) throw new Error('Failed to fetch users');
                 const data = await res.json();
-                if (res.ok) {
-                    setUsers(data.users);
-                    setTotalUsers(data.totalUsers);
-                    setLastMonthUsers(data.lastMonthUsers);
-                }
+                setUsers(data.users);
+                setTotalUsers(data.totalUsers);
+                setLastMonthUsers(data.lastMonthUsers);
             } catch (error) {
-                console.log(error.message);
+                setUsers([]);
             }
         };
         const fetchPosts = async () => {
             try {
                 const res = await fetch('/api/post/getposts?limit=5');
+                if (!res.ok) throw new Error('Failed to fetch posts');
                 const data = await res.json();
-                if (res.ok) {
-                    setPosts(data.posts);
-                    setTotalPosts(data.totalPosts);
-                    setLastMonthPosts(data.lastMonthPosts);
-                }
+                setPosts(data.posts);
+                setTotalPosts(data.totalPosts);
+                setLastMonthPosts(data.lastMonthPosts);
             } catch (error) {
-                console.log(error.message);
+                setPosts([]);
             }
         };
         const fetchComments = async () => {
             try {
                 const res = await fetch('/api/comment/getcomments?limit=5');
+                if (!res.ok) throw new Error('Failed to fetch comments');
                 const data = await res.json();
-                if (res.ok) {
-                    setComments(data.comments);
-                    setTotalComments(data.totalComments);
-                    setLastMonthComments(data.lastMonthComments);
-                }
+                setComments(data.comments);
+                setTotalComments(data.totalComments);
+                setLastMonthComments(data.lastMonthComments);
             } catch (error) {
-                console.log(error.message);
+                setComments([]);
             }
         };
         if (currentUser.isAdmin) {
